@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Car Detection with AWS Rekognition</title>
+  <meta name="description" content="Car detection web app powered by AWS Rekognition Custom Labels. Upload an image to detect cars and view results in real time.">
+  <meta name="keywords" content="Car Detection, AWS Rekognition, Machine Learning, AI, Image Classification, Custom Labels">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f8f9fa;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+    }
+    .preview-img {
+      max-width: 100%;
+      margin-top: 20px;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .sample-output img {
+      max-width: 45%;
+      margin: 5px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2 class="text-center mb-4">🚗 Car Detection Portal</h2>
+  <p class="text-muted text-center">
+    Upload an image and let our AWS Rekognition Custom Labels model detect and classify cars in real time.
+  </p>
+
+  <!-- Upload Form -->
+  <form id="uploadForm">
+    <div class="mb-3">
+      <input class="form-control" type="file" id="fileInput" accept="image/*" required>
+    </div>
+    <div class="d-grid">
+      <button class="btn btn-primary" type="submit">Analyze Image</button>
+    </div>
+  </form>
+
+  <!-- Preview -->
+  <img id="preview" class="preview-img" style="display:none;">
+  <div id="uploadResult" class="mt-4"></div>
+
+  <!-- Sample Results -->
+  <div class="sample-output text-center mt-5">
+    <h4>📊 Sample Detection Results</h4>
+    <p>Below are examples of detection results from our model:</p>
+  
+    <img src="./Images/Successful_Result_3.png" alt="Car detected" width="30%">
+    <img src="./Images/Successful_Result_2.png" alt="Car not detected" width="30%">
+    <img src="./Images/Result_detect_1.png" alt="Another detection result" width="30%">
+  
+    <p>
+      <strong>Left:</strong> ✅ Car Detected |
+      <strong>Center:</strong> ❌ No Car Detected |
+      <strong>Right:</strong> 📷 Additional Detection Example
+    </p>
+  </div>
+</div>
+
+<script>
+const API_ANALYZE = "%%BACKEND_URL%%/detect"; // replaced by Terraform or manually
+
+document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const file = document.getElementById("fileInput").files[0];
+  if (!file) return;
+
+  // Show preview
+  const preview = document.getElementById("preview");
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
+
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+
+  reader.onload = async () => {
+    const base64Data = reader.result.split(',')[1];
+
+    try {
+      const response = await fetch(API_ANALYZE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: base64Data })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const labels = (data.labels || []).map(
+          l => `${l.Name} (${l.Confidence.toFixed(2)}%)`
+        ).join(", ") || "No labels detected";
+
+        document.getElementById("uploadResult").innerHTML =
+          `<div class="alert alert-success">✅ Labels: ${labels}</div>`;
+      } else {
+        document.getElementById("uploadResult").innerHTML =
+          `<div class="alert alert-danger">❌ Error: ${data.error || 'Unknown error'}</div>`;
+      }
+    } catch (err) {
+      document.getElementById("uploadResult").innerHTML =
+        `<div class="alert alert-danger">❌ Fetch error: ${err}</div>`;
+    }
+  };
+});
+</script>
+</body>
+</html>

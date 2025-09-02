@@ -1,0 +1,25 @@
+GitHub:
+
+Rewrite by details README.mt:
+
+Create readme.mt contains
+
+1/ Describe details of project (project trainig, images for creation project)
+2/ write aboute how to find dataset and where you get from
+2/ Describe step by step deployment and put options for adding more dataset to upgrade
+3/ show cost and how to avoid high value 
+4/ can be tested if you have one model or want to create new one 
+5/ important noteslike: after training to create any system depend on the model test it first
+  with cloud watch and results json  give similar response then start model te decrease cost
+6/ training is not the main cost the run is the real cost   
+6/ website structure
+
+
+Terraform updates required (write in readme.md):
+
+Change "<Your-Region>" in /variables.tf
+Add your Rekognition  in /variables.tf
+Create your own profile and change "<Your-Profile>" in /provider.tf
+
+
+

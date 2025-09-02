@@ -1,0 +1,10 @@
+terraform-project/
+│── main.tf
+│── variables.tf
+│── outputs.tf
+│── provider.tf
+├── user_data.sh   
+├── index.zip
+│
+├── lambda/
+│     └── detect.zip 

@@ -1,66 +1,106 @@
-# Terraform AWS Rekognition Custom Label for Cars Detection Deployment
+# Terraform AWS Rekognition Custom Labels for Car Detection Deployment
 
-This project demonstrates how to deploy a **Rekognition Custom Label for Cars** and a **Detection System** on AWS using **Terraform**.  
-It provisions multiple AWS serverless services to ensure **performance, and easy process**.
+This project demonstrates how to deploy an **AWS Rekognition Custom Labels model for car detection** along with a supporting **detection system** using **Terraform**.  
+It provisions AWS serverless services to ensure automation, scalability, and simplicity.
+
+The system is a **cloud-native image analysis portal** that leverages **Amazon Rekognition Custom Labels** to detect and classify cars from uploaded images.  
+It provides an end-to-end workflow—from training the model to exposing detection results via a user-friendly web interface.  
 
 ---
 
 ## Project Overview
 
-By following this project, you will:
+By completing this project, you will:
 
-- Understand how to provision AWS resources using Terraform  
-- Deploy a **Rekognition Custom Label** 
-- Deploy a **REST API Gateway**
-- Learn how to set up **Lambda** 
-- Learn how to set up **DynamoDB** 
-- Gain hands-on experience building a complete AWS cloud serverless infrastructure  
+- Learn how to provision AWS resources using Terraform  
+- Train and deploy a **Rekognition Custom Labels model** for car detection  
+- Set up **API Gateway** as a managed REST API layer  
+- Implement **AWS Lambda** for serverless image processing  
+- Store results in **Amazon DynamoDB** (NoSQL database)  
+- Deploy a **web application on EC2** for user interaction  
+- Gain hands-on experience with a complete AWS cloud serverless infrastructure  
 
 ---
 
 ## 1. Project Details
 
-### Architecture Overview
-- **Face 1 (Train Model for cars in Rekognition Custom Label)**  
-  - Application Load Balancer (ALB) in public subnets  
-  - EC2 instances in **public subnets**   
-  - Amazon Certificate Manager (ACM) TLS certificate for HTTPS  
-  - Cognito to control access to the website using User ID and Password
+### Architecture Phases
 
-- **Face 2 (Deploy services to interact with model)**  
-  - Deploy a **REST API Gateway**
-  - Learn how to set up **Lambda** 
-  - Learn how to set up **DynamoDB**   
+- **Phase 1 – Rekognition Model Training**  
+  - Train a **Custom Labels model** in Amazon Rekognition  
+  - Prepare and upload labeled datasets (training + testing)  
+  - Optimize costs by starting the model only when needed  
 
-- **Face 3 (Design simple design web inetrface for users)**  
-  - Secure Web Server in EC2 instance. 
-  
-- **Supporting Services**  
-  - **IAM**: Fine-grained roles for EC2, Lambda, DynamoDB, and REST API Gateway    
+- **Phase 2 – Deploy Detection Services**  
+  Terraform provisions:  
+  - **EC2** instance with Apache + PHP  
+  - **API Gateway** as a RESTful interface  
+  - **AWS Lambda** for invoking Rekognition  
+  - **DynamoDB** to store detection results  
+
+- **Phase 3 – Application Workflow**  
+  1. User uploads an image via the web app  
+  2. API Gateway triggers Lambda  
+  3. Lambda calls Rekognition  
+  4. Results are saved in DynamoDB  
+  5. Web app displays classification labels with confidence scores  
+
+---
 
 ### Rekognition Custom Label Model Training and Testing
 
-follow link to AWS youtube sites
+To build your dataset, start by exploring links in the **Resources** section.  
 
-Images from Image folder and web interface keep info secert
+My training process began with a focused dataset:  
+- **Manufacturer:** Hyundai  
+- **Year:** 2012  
+- **Car Models:** 10 models selected  
+- Dataset split into training and testing for validation  
 
-my experience to train small model first by select one manufacture Hyundai, one year 2012, and 10 car models for traininig dataset and test dataset(check)
+Guidance and step-by-step instructions are available in **AWS documentation** and **YouTube tutorials**.  
 
-and there are options for adding more dataset to upgrade the model
+➡️ You can incrementally improve the model by adding:  
+- More manufacturers  
+- Additional production years  
+- Extra car models  
 
-- **VPC Module** – Networking (VPC, subnets, NAT, routing, gateways)  
-- 
+This allows you to **refine accuracy** and **extend coverage** over time.  
+
+> 🔒 Images were sourced from the project’s **Image folder** and the **web interface**, while keeping sensitive information secure.  
+
+#### Sample Training & Results  
+
+<p align="center">
+  <img src="./Images/Model.png" alt="Training Sample" width="45%" />
+  <img src="./Images/Model_Results.png" alt="Testing Sample" width="45%" />
+</p>  
+
+*Left: Rekognition Project Model | Right: Model Results after Training*  
+
 ---
 
+## Sample Web Interface Output
+
+When a user uploads an image, the interface displays detection results.  
+
+<p align="center">
+  <img src="/Images/Successful_Result_3.png" alt="Car detected example" width="45%" />
+  <img src="/Images/Successful_Result_2.png" alt="Car not detected example" width="45%" />
+</p>  
+
+**Left:** ✅ Car Detected – Labels and confidence scores (e.g., Hyundai Elantra 2012 – 98.5%).  
+**Right:** ⚠️ Multiple Labels Detected – Confidence scores are low, indicating possible misclassification.  
+
+---
 
 ## Architecture Diagram
 
 ![AWS Architecture Diagram](./Project-Diagram.png)  
-*Shows EC2, REST API Gateway, Lambda, DynamoDB, and Rekognition Custom Label  workflow.*
+*Illustrates EC2, API Gateway, Lambda, DynamoDB, and Rekognition workflow.*  
 
 ---
 
-## Terraform File Structure 
+## Terraform Project Structure
 
 ```
 terraform-project/
@@ -74,35 +114,35 @@ terraform-project/
 ├── lambda/
 │     └── detect.zip 
 ```
----
-
-## Description for Lambda process
 
 ---
 
-## Notes for cost and how to decrease it
+## Cost Optimization Notes
 
----
-
-## how to find dataset and where you get from
+- Training a Custom Labels model is relatively inexpensive  
+- The **main costs occur when the model is running for long time**  
+- Stop the model when not in use to avoid unnecessary charges  
+- Destroy the Terraform stack after testing if not needed  
 
 ---
 
 ## Features
 
-- Fully automated deployment with **Terraform**  
-- **Simple Desgin** 
-- Integration Car Detcect website frontend with Rekognition backend  
+- End-to-end car detection using **Rekognition Custom Labels**  
+- Automatic result logging in DynamoDB  
+- Serverless-first architecture with AWS services  
+- Simple web interface for real-time interaction  
+- Easy extension by plugging in your own Rekognition model  
 
 ---
 
 ## Prerequisites
 
-- Terraform >= 1.3  
-- Download `Terraform_Full_Project.zip`
-- Change `<Your-Region>` in `/variables.tf`
-- Add your Rekognition ARN `/variables.tf`
-- Change to your profile `<Your-Profile>` in `/provider.tf`. Create your secrets and save them **Follow AWS Guides**  
+- Terraform ≥ 1.3  
+- Download `Terraform_Full_Project.zip`  
+- Update `/variables.tf` with your AWS Region and Rekognition ARN  
+- Configure `/provider.tf` with your AWS CLI profile  
+- Ensure AWS Secrets are created (see AWS documentation)  
 
 ---
 
@@ -110,7 +150,7 @@ terraform-project/
 
 ```hcl
 aws_region            = "us-east-1"
-rekognition_model_arn = "arn:aws:rekognition:us-east-1:123456789012:project/xxxxxxxx/version/xxxxxxxx.xxxxxxxx/xxxxxxxx
+rekognition_model_arn = "arn:aws:rekognition:us-east-1:123456789012:project/xxxx/version/xxxx/xxxx"
 ```
 
 ---
@@ -128,70 +168,70 @@ provider "aws" {
 
 ## Getting Started
 
-1. **Clone or Unzip** the project:
+1. **Extract Project**  
    ```bash
    unzip Terraform_Full_Project.zip -d terraform_project
    cd terraform_project
    ```
 
-2. **Start the model**
+2. **Start the Rekognition model** 
    Take time to be ready
 
-3. **Initialize Terraform**:
+3. **Initialize Terraform**  
    ```bash
    terraform init
    ```
 
-4. **Review the Plan**:
+4. **Review Plan**  
    ```bash
    terraform plan
    ```
 
-5. **Apply the Configuration**:
+5. **Apply Configuration**  
    ```bash
    terraform apply
    ```
 
-6. **Access the App** using the EC2 IP once deployed
+6. **Access the Web App** via the EC2 Public IP using **HTTPS://** 
 
-7. **!Attention** Stop model if you are not using it for cost 
+7. **Stop the Rekognition model** when not in use to save cost  
 
-8. **Remember to destroy the project and stop model after finish**:
+8. **Tear down the project when done**  
    ```bash
    terraform destroy
    ```
 
 ---
 
-## Instance Types Used
+## Instance Types and Lambda Code
 
-- **EC2**: t2.micro
-- **Lambda**: Python 3.13
+- **EC2**: t2.micro – Apache + PHP with HTTPS  
+- **Lambda**: Python 3.13  
 
 ---
 
 ## Notes
 
-- Rekognition Custom Label not supported in all regions, so check for your region  
-- All system must runs in **same region** 
-- Check system before start module to avoid cost in Troubleshooting
+- Rekognition Custom Labels is not available in all regions  
+- All services must be in the same AWS Region  
+- Test the pipeline using **CloudWatch logs** and verify **JSON results in DynamoDB** before starting the model to save cost  
 
 ---
 
 ## Troubleshooting
 
-- Ensure your AWS credentials and region are correctly set in the provider
-- Verify the Rekognition Custom Label ARN is correct ans set in variables
-- Check security group rules to allow necessary traffic
-- Review Terraform output for any errors during deployment
+- Verify AWS credentials and region in `provider.tf`  
+- Check Rekognition ARN in `variables.tf`  
+- Confirm security group rules  
+- Inspect Terraform logs for deployment issues  
 
 ---
 
 ## Resources
 
-- Cars Dataset Resouces
-- [kaggle](https://www.kaggle.com/datasets)
-- [mmlab](https://mmlab.ie.cuhk.edu.hk/)
+- Example Car Datasets:  
+   - [Kaggle](https://www.kaggle.com/datasets)  
+   - [MMLab](https://mmlab.ie.cuhk.edu.hk/)  
 
 ---
 

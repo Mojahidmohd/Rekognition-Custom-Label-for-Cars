@@ -60,6 +60,22 @@ and there are options for adding more dataset to upgrade the model
 
 ---
 
+## Terraform File Structure 
+
+```
+terraform-project/
+│── main.tf
+│── variables.tf
+│── outputs.tf
+│── provider.tf
+├── user_data.sh   
+├── index.zip
+│
+├── lambda/
+│     └── detect.zip 
+```
+---
+
 ## Description for Lambda process
 
 ---
@@ -69,10 +85,6 @@ and there are options for adding more dataset to upgrade the model
 ---
 
 ## how to find dataset and where you get from
-
----
-
-## link to structure file
 
 ---
 

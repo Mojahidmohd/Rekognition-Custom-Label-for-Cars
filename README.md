@@ -88,7 +88,7 @@ When a user uploads an image, the interface displays detection results.
   <img src="/Images/Successful_Result_2.png" alt="Car not detected example" width="45%" />
 </p>  
 
-**Left:** ✅ Car Detected – Labels and confidence scores (e.g., Hyundai Elantra 2012 – 98.5%).  
+**Left:** ✅ Car Detected – Labels and confidence scores (e.g., Hyundai Tucson 2012 – 99.92%).  
 **Right:** ⚠️ Multiple Labels Detected – Confidence scores are low, indicating possible misclassification.  
 
 ---
